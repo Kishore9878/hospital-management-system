@@ -6,6 +6,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Modal from "@/components/comp/Modal";
 import { Button } from "@/components/ui/button";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Award } from "lucide-react";
 import Layout from "@/components/comp/Layout";
 import AppointmentForm from "@/components/comp/AppointmentForm";
@@ -24,6 +26,12 @@ const specializationColors = {
 
 export default function Doctors() {
     const { doctors, loading: isLoading } = useSelector(state => state.doctors)
+    const { user, isAuthenticated } = useSelector((state) => state.user);
+    const navigate = useNavigate();
+
+    // Hovered doctor for details tooltip
+    const [hoveredDoctorId, setHoveredDoctorId] = useState(null);
+
     // const [doctors, setDoctors] = useState([]);
     const [doctorDetail, setDoctorDetail] = useState(null);
     // const [isLoading, setIsLoading] = useState(true);
@@ -31,7 +39,18 @@ export default function Doctors() {
     const [selectedSpecialization, setSelectedSpecialization] = useState("all");
 
     const { doctors: apiDoctors } = useSelector((state) => state.doctors);
-    const allDoctorsData = apiDoctors && apiDoctors.length > 0 ? apiDoctors : dummyDoctors;
+
+    // Combine dummy data with API-fetched doctors and dedupe by email (or ID if available)
+    const allDoctorsData = [
+        ...dummyDoctors,
+        ...(apiDoctors || []),
+    ].reduce((unique, doctor) => {
+        const key = doctor.email || doctor?._id || doctor.fullName;
+        if (!unique.some((item) => item.email === key || item._id === key || item.fullName === key)) {
+            unique.push(doctor);
+        }
+        return unique;
+    }, []);
 
     const dispatch = useDispatch()
 
@@ -69,11 +88,25 @@ export default function Doctors() {
         setSelectedModal("appointment");
     };
 
+    const handleBookAction = (doctor) => {
+        if (!isAuthenticated) {
+            toast.info("Login as patient to book an appointment.");
+            navigate("/login");
+            return;
+        }
+
+        if (user?.role !== "patient") {
+            toast.info("Only patients can book appointments.");
+            return;
+        }
+
+        openAppointmentForm(doctor);
+    };
+
     const closeModal = () => {
         setSelectedModal(null);
         setDoctorDetail(null);
     };
-
     const departments = [
     ...new Set(allDoctorsData?.map((d) => d.department).filter(Boolean))
     ];
@@ -178,13 +211,38 @@ export default function Doctors() {
                                                     </div>
                                                 )}
                                             </div>
-                                            <CardContent className="p-6">
+                                            <CardContent className="p-6 relative">
                                                 <h3
                                                     onClick={() => openDoctorDetail(doctor._id)}
+                                                    onMouseEnter={() => setHoveredDoctorId(doctor._id)}
+                                                    onMouseLeave={() => setHoveredDoctorId(null)}
                                                     className="text-xl cursor-pointer hover:underline font-bold text-gray-900 mb-1"
                                                 >
                                                     Dr. {fullName}
                                                 </h3>
+
+                                                {hoveredDoctorId === doctor._id && (
+                                                    <div className="absolute z-30 top-10 left-0 w-72 bg-white shadow-lg border border-gray-200 p-3 rounded-lg text-sm text-gray-700">
+                                                        <div>
+                                                            <span className="font-semibold">Department:</span> {doctor.department || "N/A"}
+                                                        </div>
+                                                        <div>
+                                                            <span className="font-semibold">Qualifications:</span> {doctor.qualifications || "N/A"}
+                                                        </div>
+                                                        <div>
+                                                            <span className="font-semibold">Experience:</span> {doctor.experienceYears ? `${doctor.experienceYears} years` : "N/A"}
+                                                        </div>
+                                                        <div>
+                                                            <span className="font-semibold">Availability:</span> {doctor.availableTimes || "N/A"}
+                                                        </div>
+                                                        {Array.isArray(doctor.availableDays) && doctor.availableDays.length > 0 && (
+                                                            <div>
+                                                                <span className="font-semibold">Days:</span> {doctor.availableDays.join(", ")}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+
                                                 <Badge
                                                     className={`mb-4 ${specializationColors[department] ||
                                                         specializationColors["general_medicine"]
@@ -223,12 +281,16 @@ export default function Doctors() {
                                             </CardContent>
                                             <CardFooter>
                                                 <Button
-                                                    onClick={() => openAppointmentForm(doctor)}
+                                                    onClick={() => handleBookAction(doctor)}
                                                     variant="outline"
                                                     size="sm"
                                                     className="text-xs"
                                                 >
-                                                    Book Appointment
+                                                    {!isAuthenticated
+                                                        ? "Login"
+                                                        : user?.role === "patient"
+                                                            ? "Book Appointment"
+                                                            : "Login"}
                                                 </Button>
                                             </CardFooter>
                                         </Card>

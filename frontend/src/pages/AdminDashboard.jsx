@@ -8,6 +8,8 @@ import StatsCard from '@/components/comp/StatsCard';
 import UserCard from '@/components/comp/UserCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { axiosInstance } from '@/constant/axios';
 import { logoutUser } from '@/redux/slices/userSlice';
@@ -28,6 +30,22 @@ const AdminDashboard = () => {
     console.log("currentUserAdmin:", currentUserAdmin);
     const [loading, setLoading] = useState(false)
     const [userDetail, setUserDetail] = useState(null);
+    const [isCreateDoctorOpen, setIsCreateDoctorOpen] = useState(false);
+    const [newDoctor, setNewDoctor] = useState({
+        fullName: "",
+        email: "",
+        password: "",
+        department: "",
+        qualifications: "",
+        experienceYears: "",
+        phone: "",
+        age: "",
+        address: "",
+        availableDays: "",
+        availableTimes: "",
+        description: "",
+        bio: "",
+    });
     // const [isLoading, setIsLoading] = useState(true);
     const [selectedModal, setSelectedModal] = useState(null);
 
@@ -78,6 +96,49 @@ const AdminDashboard = () => {
         }
 
     }
+
+    const handleDoctorFormChange = (e) => {
+        const { name, value } = e.target;
+        setNewDoctor((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleCreateDoctor = async () => {
+        if (!newDoctor.fullName || !newDoctor.email || !newDoctor.password || !newDoctor.department || !newDoctor.qualifications || !newDoctor.experienceYears || !newDoctor.phone || !newDoctor.age || !newDoctor.address || !newDoctor.availableDays || !newDoctor.availableTimes || !newDoctor.description) {
+            toast.error("Please fill all required doctor fields");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            await axiosInstance.post("/admin/create-user", {
+                role: "doctor",
+                ...newDoctor,
+                availableDays: newDoctor.availableDays.split(",").map((d) => d.trim()).filter(Boolean),
+            });
+            toast.success("Doctor created successfully");
+            setIsCreateDoctorOpen(false);
+            setNewDoctor({
+                fullName: "",
+                email: "",
+                password: "",
+                department: "",
+                qualifications: "",
+                experienceYears: "",
+                phone: "",
+                age: "",
+                address: "",
+                availableDays: "",
+                availableTimes: "",
+                description: "",
+                bio: "",
+            });
+            getAllData();
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Could not create doctor");
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
     useEffect(() => {
@@ -233,7 +294,11 @@ const AdminDashboard = () => {
                 }
                 {
                     selectedLink === "doctors" && <div className="p-6 space-y-8">
-                        {/* Stats Grid */}
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-2xl font-bold">Doctors</h2>
+                            <Button onClick={() => setIsCreateDoctorOpen(true)}>Add Doctor</Button>
+                        </div>
+
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                             {
                                 allData?.doctors?.map(doctors =>
@@ -242,6 +307,32 @@ const AdminDashboard = () => {
 
                             }
                         </div>
+
+                        <Modal selectedPatient={isCreateDoctorOpen} setSelectedPatient={() => setIsCreateDoctorOpen(false)} title="Create Doctor" close>
+                            <div className="grid grid-cols-1 gap-4 p-4">
+                                {[
+                                    ["fullName", "Full Name"],
+                                    ["email", "Email"],
+                                    ["password", "Password"],
+                                    ["department", "Department"],
+                                    ["qualifications", "Qualifications"],
+                                    ["experienceYears", "Experience Years"],
+                                    ["phone", "Phone"],
+                                    ["age", "Age"],
+                                    ["address", "Address"],
+                                    ["availableDays", "Available Days (comma separated)"],
+                                    ["availableTimes", "Available Times"],
+                                    ["description", "Description"],
+                                    ["bio", "Bio"],
+                                ].map(([key, label]) => (
+                                    <div key={key} className="grid grid-cols-1 gap-1">
+                                        <Label htmlFor={key}>{label}</Label>
+                                        <Input id={key} name={key} value={newDoctor[key]} onChange={handleDoctorFormChange} />
+                                    </div>
+                                ))}
+                                <Button onClick={handleCreateDoctor} className="mt-2">Create</Button>
+                            </div>
+                        </Modal>
                     </div>
                 }
 

@@ -8,6 +8,7 @@ import {
   // deleteDoctorUsingIdByAdmin,
   getDoctorPatientDetails,
   getDoctorPatients,
+  updateDoctorProfile,
 } from "../controllers/doctor.controllers.js";
 import { isAuthenticated, isDoctor } from "../middleware/auth.middleware.js";
 // import { upload } from "../middleware/file.middleware.js";
@@ -37,6 +38,13 @@ doctorRouter.get(
   isAuthenticated,
   isDoctor,
   getTodaysAppointments
+);
+
+doctorRouter.put(
+  "/update/profile",
+  isAuthenticated,
+  isDoctor,
+  updateDoctorProfile
 );
 
 // doctorRouter.post("/create", createDoctorByAdmin);

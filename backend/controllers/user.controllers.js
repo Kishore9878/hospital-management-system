@@ -192,10 +192,14 @@ export const getProfile = async (req, res) => {
 
     if (user.role === "doctor" || user.role === "patient") {
       profileData = await getUserProfileByRole(user);
+
       if (!profileData) {
-        return res.status(404).json({
-          success: false,
-          message: `${user.role} profile not found`,
+        // No separate profile exists yet; return base user so UI can still work
+        return res.status(200).json({
+          success: true,
+          message: `${user.role} profile not found; returning base user data`,
+          profile: user,
+          user,
         });
       }
     } else if (user.role === "admin") {
@@ -303,15 +307,46 @@ export const updateProfile = asyncHandler(async (req, res) => {
       if (address !== undefined) updateFields.address = address;
       if (bloodGroup !== undefined) updateFields.bloodGroup = bloodGroup;
       if (availableDays !== undefined)
-        updateFields.availableDays = availableDays;
+        updateFields.availableDays = Array.isArray(availableDays)
+          ? availableDays
+          : (availableDays || "").split(",").map((d) => d.trim()).filter(Boolean);
       if (availableTimes !== undefined)
         updateFields.availableTimes = availableTimes;
+      if (req.body.bio !== undefined) updateFields.bio = req.body.bio;
+      if (req.body.description !== undefined) updateFields.description = req.body.description;
 
       updatedProfile = await Doctor.findOneAndUpdate(
         { user: user._id },
         { $set: updateFields },
         { new: true }
       ).populate("user", "fullName email profileImage role");
+
+      // If doctor profile does not exist yet, create it
+      if (!updatedProfile) {
+        const doctorCreateData = {
+          user: user._id,
+          department: updateFields.department || "General_Medicine",
+          qualifications: updateFields.qualifications || "Not specified",
+          experienceYears: updateFields.experienceYears || 0,
+          phone: updateFields.phone || 0,
+          age: updateFields.age || 0,
+          address: updateFields.address || "Not specified",
+          gender: updateFields.gender || "",
+          bloodGroup: updateFields.bloodGroup || "",
+          availableDays: updateFields.availableDays || [],
+          availableTimes: updateFields.availableTimes || "",
+          bio: updateFields.bio || "",
+          description:
+            updateFields.description ||
+            "Profile description is not provided yet. Please update your profile.",
+        };
+
+        updatedProfile = await Doctor.create(doctorCreateData);
+        updatedProfile = await Doctor.findById(updatedProfile._id).populate(
+          "user",
+          "fullName email profileImage role"
+        );
+      }
     }
 
     // ---------------------------

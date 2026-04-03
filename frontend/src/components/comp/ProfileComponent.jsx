@@ -37,10 +37,10 @@ const ProfileComponent = ({ user, isAuthenticated }) => {
 
                         <div className="w-full mb-2 grid grid-cols-4 gap-3 items-center">
                             <h1
-                                className="col-span-1 font-medium text-indigo-900 dark:text-white">Username: </h1>
+                                className="col-span-1 font-medium text-indigo-900 dark:text-white">Full Name: </h1>
                             <p id="first_name"
                                 className="text-indigo-900 col-span-3  text-noraml "
-                            >{user?.username}
+                            >{user?.fullName}
                             </p>
                         </div>
 
@@ -61,6 +61,46 @@ const ProfileComponent = ({ user, isAuthenticated }) => {
                                 className="text-indigo-900 col-span-3 text-noraml "
                             >{user?.phone}</p>
                         </div>}
+                        {user?.role === "doctor" && (
+                            <>
+                                {user?.department && <div className="w-full mb-2 grid grid-cols-4 gap-3 items-center">
+                                    <h1 className="col-span-1 font-medium text-indigo-900 dark:text-white">Department: </h1>
+                                    <p className="text-indigo-900 col-span-3 text-normal">{user?.department}</p>
+                                </div>}
+                                {user?.qualifications && <div className="w-full mb-2 grid grid-cols-4 gap-3 items-center">
+                                    <h1 className="col-span-1 font-medium text-indigo-900 dark:text-white">Qualifications: </h1>
+                                    <p className="text-indigo-900 col-span-3 text-normal">{user?.qualifications}</p>
+                                </div>}
+                                {user?.experienceYears && <div className="w-full mb-2 grid grid-cols-4 gap-3 items-center">
+                                    <h1 className="col-span-1 font-medium text-indigo-900 dark:text-white">Experience: </h1>
+                                    <p className="text-indigo-900 col-span-3 text-normal">{user?.experienceYears} years</p>
+                                </div>}
+                                {user?.age && <div className="w-full mb-2 grid grid-cols-4 gap-3 items-center">
+                                    <h1 className="col-span-1 font-medium text-indigo-900 dark:text-white">Age: </h1>
+                                    <p className="text-indigo-900 col-span-3 text-normal">{user?.age}</p>
+                                </div>}
+                                {user?.address && <div className="w-full mb-2 grid grid-cols-4 gap-3 items-center">
+                                    <h1 className="col-span-1 font-medium text-indigo-900 dark:text-white">Address: </h1>
+                                    <p className="text-indigo-900 col-span-3 text-normal">{user?.address}</p>
+                                </div>}
+                                {user?.gender && <div className="w-full mb-2 grid grid-cols-4 gap-3 items-center">
+                                    <h1 className="col-span-1 font-medium text-indigo-900 dark:text-white">Gender: </h1>
+                                    <p className="text-indigo-900 col-span-3 text-normal">{user?.gender}</p>
+                                </div>}
+                                {user?.bloodGroup && <div className="w-full mb-2 grid grid-cols-4 gap-3 items-center">
+                                    <h1 className="col-span-1 font-medium text-indigo-900 dark:text-white">Blood Group: </h1>
+                                    <p className="text-indigo-900 col-span-3 text-normal">{user?.bloodGroup}</p>
+                                </div>}
+                                {user?.availableDays && <div className="w-full mb-2 grid grid-cols-4 gap-3 items-center">
+                                    <h1 className="col-span-1 font-medium text-indigo-900 dark:text-white">Available Days: </h1>
+                                    <p className="text-indigo-900 col-span-3 text-normal">{user?.availableDays?.join(', ')}</p>
+                                </div>}
+                                {user?.availableTimes && <div className="w-full mb-2 grid grid-cols-4 gap-3 items-center">
+                                    <h1 className="col-span-1 font-medium text-indigo-900 dark:text-white">Available Times: </h1>
+                                    <p className="text-indigo-900 col-span-3 text-normal">{user?.availableTimes}</p>
+                                </div>}
+                            </>
+                        )}
                         {user?.role === "admin" && <div className="w-full mb-2 grid grid-cols-4 gap-3 items-center">
                             <h1
                                 className="col-span-1 font-medium text-indigo-900 dark:text-white">Role: </h1>

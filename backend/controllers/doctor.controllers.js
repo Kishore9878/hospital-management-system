@@ -504,3 +504,77 @@ export const getAllDoctors = async (req, res) => {
     });
   }
 };
+
+
+export const updateDoctorProfile = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { fullName, email, ...doctorData } = req.body;
+
+    // 1️⃣ Update the User Model (fullName and Email)
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { fullName, email },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // 2️⃣ Find or Create/Update the Doctor Model
+    let doctor = await Doctor.findOne({ user: userId });
+
+    // Ensure required field safety for first-time creation
+    const defaultDoctorData = {
+      ...doctorData,
+      bio: doctorData.bio || doctor?.bio || "",
+      description:
+        doctorData.description ||
+        doctor?.description ||
+        "Doctor description not provided yet.",
+      department: doctorData.department || doctor?.department || "General_Medicine",
+      qualifications:
+        doctorData.qualifications || doctor?.qualifications || "Not specified",
+      experienceYears:
+        doctorData.experienceYears || doctor?.experienceYears || 0,
+      phone: doctorData.phone || doctor?.phone || 0,
+      age: doctorData.age || doctor?.age || 0,
+      address: doctorData.address || doctor?.address || "Not specified",
+      availableDays: doctorData.availableDays || doctor?.availableDays || [],
+      availableTimes: doctorData.availableTimes || doctor?.availableTimes || "",
+    };
+
+    if (!doctor) {
+      doctor = await Doctor.create({
+        user: userId,
+        ...defaultDoctorData,
+      });
+    } else {
+      // Update fields like department, qualifications, availableDays, etc.
+      doctor = await Doctor.findOneAndUpdate(
+        { user: userId },
+        { $set: doctorData },
+        { new: true }
+      );
+    }
+
+    // 3️⃣ Populate and return
+    const populatedDoctor = await Doctor.findById(doctor._id).populate("user");
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user: populatedDoctor.user,   // Sent to Redux to update fullName/email
+      doctor: populatedDoctor       // Sent to Redux for specific doctor stats
+    });
+
+  } catch (error) {
+    console.error("Doctor update error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Doctor profile update failed",
+      error: error.message
+    });
+  }
+};

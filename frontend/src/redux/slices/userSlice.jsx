@@ -18,18 +18,25 @@ export const userSlice = createSlice({
         },
         setUser: (state, action) => {
             const payload = action.payload;
-            // Normalize API payloads into one flat user object.
-            // If payload contains nested `user`, keep profile fields (age/department/etc)
-            // and merge base user fields (fullName/email/role/profileImage) on top.
-            if (payload?.user && typeof payload.user === "object") {
+
+            if (payload?.success) {
+                // If we passed the whole 'data' object from the API response
+                const baseUser = payload.user || {};
+                const profileDetails = payload.doctor || payload.patient || payload.profile || {};
+
                 state.user = {
-                    ...payload,
-                    ...payload.user,
+                    ...profileDetails, // Contains age, department, etc.
+                    ...baseUser,       // Overwrite with latest firstName, email, role
                 };
+            } else if (payload?.user) {
+                // Handle cases where only { user: ... } is passed
+                state.user = { ...payload, ...payload.user };
             } else {
+                // Fallback for simple user objects
                 state.user = payload;
             }
-            state.isAuthenticated = true;
+            
+            state.isAuthenticated = !!state.user;
             state.error = null;
         },
         setAppointment: (state, action) => {
@@ -130,27 +137,27 @@ export const getUserProfile = () => async (dispatch) => {
         dispatch(setLoading(false));
     }
 };
-// // Get Profile
-// export const updateUserProfile = (profileData) => async (dispatch) => {
-//     dispatch(setLoading(true));
-//     console.log("profileData :", profileData);
+// Get Profile
+export const updateUserProfile = (profileData) => async (dispatch) => {
+    dispatch(setLoading(true));
+    console.log("profileData :", profileData);
 
-//     try {
-//         const { data } = await axiosInstance.put('/user/update/profile', profileData)
-//         console.log("data update:", data);
+    try {
+        const { data } = await axiosInstance.put('/user/update/profile', profileData)
+        console.log("data update:", data);
 
-//         if (data?.success) {
-//             // dispatch(getUserProfile());
-//             dispatch(setUser(data?.user)); // Ensure consistency
-//             toast.success(data?.message)
-//         }
-//     } catch (err) {
-//         dispatch(setError(err.response?.data?.message || "Fetching profile failed"));
-//         // toast.error(err.response?.data?.message || "Fetching profile failed");
-//     } finally {
-//         dispatch(setLoading(false));
-//     }
-// };
+        if (data?.success) {
+            dispatch(setUser(data?.profile || data?.user || data));
+            dispatch(getUserProfile());
+            toast.success(data?.message || "Profile updated successfully");
+        }
+    } catch (err) {
+        dispatch(setError(err.response?.data?.message || "Fetching profile failed"));
+        toast.error(err.response?.data?.message || "Fetching profile failed");
+    } finally {
+        dispatch(setLoading(false));
+    }
+};
 export const forgotPassword = (email) => async (dispatch) => {
     dispatch(setLoading(true));
     try {
@@ -162,6 +169,25 @@ export const forgotPassword = (email) => async (dispatch) => {
     } catch (err) {
         dispatch(setError(err?.response?.data?.message || "Request failed"));
         toast.error(err?.response?.data?.message || "Request failed");
+    } finally {
+        dispatch(setLoading(false));
+    }
+};
+
+
+export const updateDoctorProfile = (profileData) => async (dispatch) => {
+    dispatch(setLoading(true));
+    try {
+        const { data } = await axiosInstance.put("/doctor/update/profile", profileData);
+
+        if (data?.success) {
+            dispatch(setUser(data?.doctor || data?.user || data));
+            dispatch(getUserProfile());
+            toast.success(data?.message || "Doctor profile updated");
+        }
+    } catch (err) {
+        dispatch(setError(err.response?.data?.message || "Doctor update failed"));
+        toast.error(err.response?.data?.message || "Doctor update failed");
     } finally {
         dispatch(setLoading(false));
     }
