@@ -116,36 +116,38 @@ const Profile = () => {
         });
     };
 
-    let userInputData = [
-        "fullName",
-        "email",
-        "gender",
-        "bloodGroup",
-        "department",
-        "qualifications",
-        "experienceYears",
-        "phone",
-        "age",
-        "address",
-        "availableDays",
-        "availableTimes",
-        "description",
-    ];
-
     const userRole = user?.role || user?.user?.role;
 
-    if (userRole !== "doctor") {
-        userInputData = userInputData.filter(
-            (field) =>
-                ![
-                    "department",
-                    "qualifications",
-                    "experienceYears",
-                    "availableDays",
-                    "availableTimes",
-                    "description",
-                ].includes(field)
-        );
+    let userInputData = ["fullName", "email"];
+
+    if (userRole === "patient") {
+        userInputData = [
+            "fullName",
+            "email",
+            "gender",
+            "bloodGroup",
+            "phone",
+            "age",
+            "address",
+        ];
+    }
+
+    if (userRole === "doctor") {
+        userInputData = [
+            "fullName",
+            "email",
+            "gender",
+            "bloodGroup",
+            "department",
+            "qualifications",
+            "experienceYears",
+            "phone",
+            "age",
+            "address",
+            "availableDays",
+            "availableTimes",
+            "description",
+        ];
     }
 
 

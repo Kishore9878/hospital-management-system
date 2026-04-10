@@ -177,6 +177,8 @@ export const createUserByAdmin = async (req, res) => {
       bio,
     } = req.body;
 
+    const normalizedGender = typeof gender === "string" ? gender.toLowerCase() : gender;
+
     if (!role || !["doctor", "patient"].includes(role)) {
       return res.status(400).json({
         success: false,
@@ -284,7 +286,7 @@ export const createUserByAdmin = async (req, res) => {
       const patient = await Patient.create({
         user: user._id,
         age,
-        gender,
+        gender: normalizedGender,
         address,
         phone,
         bloodGroup,

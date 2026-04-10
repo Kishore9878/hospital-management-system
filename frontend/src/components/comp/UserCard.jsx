@@ -4,7 +4,7 @@ import { Mail, UserCircle2 } from "lucide-react";
 import ProfileImage from "./ProfileImage";
 import { Button } from "../ui/button";
 
-const UserCard = ({ user, openDetailModal }) => {
+const UserCard = ({ user, openDetailModal, onEdit }) => {
     if (!user) return null;
 
     const { fullName, email, role, profileImage, createdAt } = user.user || user;
@@ -30,7 +30,10 @@ const UserCard = ({ user, openDetailModal }) => {
                 <p className="text-xs text-gray-400 mt-2">
                     Joined: {new Date(createdAt).toLocaleDateString()}
                 </p>
-                <Button onClick={() => openDetailModal(user?._id)} className="mt-2">View</Button>
+                <div className="flex gap-2 mt-2">
+                    <Button type="button" onClick={() => openDetailModal(user?._id)}>View</Button>
+                    <Button type="button" variant="outline" onClick={() => onEdit?.(user?._id)}>Edit</Button>
+                </div>
             </CardContent>
         </Card >
     );
