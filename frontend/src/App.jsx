@@ -55,7 +55,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard/admin",
-    element: <AdminDashboard />,
+    element: (
+      <ProtectedRoute allowedRoles={["admin"]}>
+        <AdminDashboard />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/update-profile",
@@ -95,15 +99,9 @@ function App() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
 
-  
-
-  console.log("APP USER:", user);
-
   useEffect(() => {
-    if (!user) {
-      dispatch(getUserProfile());
-    }
-  }, [dispatch, user]);
+    dispatch(getUserProfile());
+  }, [dispatch]);
 
   return <RouterProvider router={router} />;
 }

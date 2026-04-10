@@ -110,7 +110,7 @@ const UserDashboard = (
                             </h1>
                             <p className="text-gray-500">
                                 {currentUser?.department && `${currentUser.department} • `}
-                                You have {thisWeekAppointments?.appointments?.count || 0} appointments of this week
+                                You have {thisWeekAppointments?.count || 0} appointments of this week
                             </p>
                         </div>
 
@@ -189,6 +189,9 @@ const UserDashboard = (
                             }
                         </div>
                     </div>}
+
+
+        
 
                 {
                     selectedLink === "appointments" && <div className=" p-6 space-y-8">

@@ -53,6 +53,7 @@ export const sendResponse = (
     .json({
       success: true,
       message,
+      token,
       ...responseData,
     });
 };

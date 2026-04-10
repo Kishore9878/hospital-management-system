@@ -31,16 +31,13 @@ export const deleteAllUsers = asyncHandler(async (req, res) => {
 });
 
 export const createAdmin = asyncHandler(async (req, res) => {
-  const { fullName, email, password, role } = req.body;
-  const adminId = req.user?._id;
-  let userRole = role || "admin";
+  const { fullName, email, password } = req.body;
+  const userRole = "admin";
 
-  const adminUser = await User.findById(adminId);
-
-  if (adminUser.role === "admin" && (!req.user || req.user.role !== "admin")) {
+  if (!req.user || req.user.role !== "admin") {
     return res.status(403).json({
       success: false,
-      message: "Unauthorized to create admin account",
+      message: "Unauthorized: Admins only can create admin accounts",
     });
   }
   // Check if user already exists
@@ -118,23 +115,28 @@ export const loginUser = asyncHandler(async (req, res, next) => {
 
   const user = await User.findOne({ email });
   if (!user) {
-    res.status(400).send({
+    return res.status(400).json({
       success: false,
-      message: "User does not exists",
+      message: "User does not exist",
     });
   }
 
   // const isMatch = bcryptjs.compareSync(password, user.password);
   const isMatch = comparePassword(password, user.password);
   if (!isMatch) {
-    res.status(400).send({
+    return res.status(400).json({
       success: false,
-      message: "Invalid data !",
+      message: "Invalid credentials",
     });
-    // return next(new ErrorHandler("Invalid data", 400));
   }
 
-  sendResponse(res, user, 200, "User log in Successfully");
+  // Fetch profile data if it exists
+  let profile = null;
+  if (user.role === "doctor" || user.role === "patient") {
+    profile = await getUserProfileByRole(user);
+  }
+
+  sendResponse(res, user, 200, "User logged in successfully", profile);
 });
 
 // logout user

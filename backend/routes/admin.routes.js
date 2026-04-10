@@ -25,27 +25,34 @@ import {
 } from "../controllers/appointment.controllers.js";
 
 const adminRouter = Router();
-adminRouter.get("/all", getAllParientAndDoctors);
+adminRouter.get("/all", isAuthenticated, isAdmin, getAllParientAndDoctors);
 // adminRouter.post("/create-doctor", createDoctorByAdmin);
 // adminRouter.post("/create-patient", createPatientByAdmin);
-adminRouter.post("/create-user", createUserByAdmin);
-adminRouter.get("/profile/:role/:id", getPatientAndDoctorProfileByAdmin);
+adminRouter.post("/create-user", isAuthenticated, isAdmin, createUserByAdmin);
+adminRouter.get(
+  "/profile/:role/:id",
+  isAuthenticated,
+  isAdmin,
+  getPatientAndDoctorProfileByAdmin
+);
 adminRouter.put(
   "/profile/:userId",
   isAuthenticated,
+  isAdmin,
   updatePatientAndDoctorProfileByAdmin
 );
 adminRouter.put(
   "/update-image/:role/:id",
   upload.single("profileImage"),
   isAuthenticated,
+  isAdmin,
   updatePatientAndDoctorProfileImage
 );
 
 adminRouter.delete(
   "/:role/:id",
   isAuthenticated,
-  // isAdmin,
+  isAdmin,
   deletePatientAndDoctorProfileByAdmin
 );
 
@@ -58,7 +65,7 @@ adminRouter.post(
 adminRouter.get(
   "/all/appointments",
   isAuthenticated,
-  // isAdmin,
+  isAdmin,
   getAllAppointments
 );
 adminRouter.delete(

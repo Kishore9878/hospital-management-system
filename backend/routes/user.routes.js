@@ -50,10 +50,10 @@ userRouter.post("/reset-password/:token", resetPassword);
 
 // admin
 userRouter.get("/user/:id", isAuthenticated, getUserAccountById);
-userRouter.get("/all", allUsers);
-userRouter.delete("/delete-all", deleteAllUsers);
+userRouter.get("/all", isAuthenticated, isAdmin, allUsers);
+userRouter.delete("/delete-all", isAuthenticated, isAdmin, deleteAllUsers);
 // userRouter.delete("/user/admin/delete/:id", isAuthenticated, deleteUserAccount);
-userRouter.get("/user/admin/get/:id", isAuthenticated, getUserAccountById);
+userRouter.get("/user/admin/get/:id", isAuthenticated, isAdmin, getUserAccountById);
 userRouter.post("/create/appointment", isAuthenticated, createAppointment);
 userRouter.get(
   "/my-appointments",

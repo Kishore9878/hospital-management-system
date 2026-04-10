@@ -349,9 +349,12 @@ export const getDoctorPatients = async (req, res) => {
       },
     });
 
+    // Filter out appointments with null patients (orphaned appointments)
+    const validAppointments = appointments.filter((a) => a.patient && a.patient._id);
+
     const uniquePatients = [
       ...new Map(
-        appointments.map((a) => [a.patient._id.toString(), a.patient])
+        validAppointments.map((a) => [a.patient._id.toString(), a.patient])
       ).values(),
     ];
 

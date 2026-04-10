@@ -8,7 +8,6 @@ import mongoose from "mongoose";
 export const createAppointment = async (req, res) => {
   try {
     const {
-      patientId,
       fullName,
       email,
       phone,
@@ -20,12 +19,19 @@ export const createAppointment = async (req, res) => {
       time,
       reason,
     } = req.body;
-    console.log("req.body :", req.body);
 
-    if (!patientId) {
+    if (!doctorId || !date || !time) {
       return res.status(400).json({
         success: false,
-        message: "Patient, doctor, and time are required",
+        message: "Doctor, date, and time are required",
+      });
+    }
+
+    const patient = await Patient.findOne({ user: req.user._id });
+    if (!patient) {
+      return res.status(404).json({
+        success: false,
+        message: "Patient profile not found for current user",
       });
     }
 
@@ -35,18 +41,17 @@ export const createAppointment = async (req, res) => {
         message: "Date cannot be in the past",
       });
     }
+
     const appointment = await Appointment.create({
-      patient: patientId,
+      patient: patient._id,
       doctor: doctorId,
-      // patient: new mongoose.Types.ObjectId(patientId),
-      // doctor: new mongoose.Types.ObjectId(doctorId),
       fullName,
       email,
       phone,
       gender,
       department,
       age,
-      date: date,
+      date,
       time,
       reason,
     });
@@ -262,7 +267,12 @@ export const getLoggedInPatientAppointments = async (req, res) => {
     }
 
     // 2️⃣ Fetch all appointments for this patient
-    const appointments = await Appointment.find({ patient: patient._id })
+    const patientIds = [patient._id];
+    if (mongoose.Types.ObjectId.isValid(userId)) {
+      patientIds.push(userId);
+    }
+
+    const appointments = await Appointment.find({ patient: { $in: patientIds } })
       .populate({
         path: "doctor",
         populate: {
@@ -316,8 +326,13 @@ export const getPatientAppointmentsThisWeek = async (req, res) => {
     weekEnd.setHours(23, 59, 59, 999);
 
     // 3️⃣ Fetch appointments within this week
+    const patientIds = [patient._id];
+    if (mongoose.Types.ObjectId.isValid(userId)) {
+      patientIds.push(userId);
+    }
+
     const appointments = await Appointment.find({
-      patient: patient._id,
+      patient: { $in: patientIds },
       date: { $gte: weekStart, $lte: weekEnd },
     })
       .populate({

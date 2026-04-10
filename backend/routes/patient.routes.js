@@ -5,11 +5,11 @@ import {
   getPatientByIdByAdmin,
   updateProfileByAdmin,
 } from "../controllers/patient.controllers.js";
-import { isAuthenticated } from "../middleware/auth.middleware.js";
+import { isAuthenticated, isAdmin } from "../middleware/auth.middleware.js";
 import { upload } from "../middleware/file.middleware.js";
 const patientRouter = Router();
 
-patientRouter.post("/create", createPatientByAdmin);
+patientRouter.post("/create", isAuthenticated, isAdmin, createPatientByAdmin);
 patientRouter.get("/:userId", isAuthenticated, getPatientByIdByAdmin);
 patientRouter.get("/all", isAuthenticated, getAllPatients);
 patientRouter.put(

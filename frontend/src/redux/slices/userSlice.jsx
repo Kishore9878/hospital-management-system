@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 export const userSlice = createSlice({
     name: "user",
     initialState: {
-        loading: false,
+        loading: true,
         user: null,
         error: null,
         isAuthenticated: false,
@@ -16,7 +16,7 @@ export const userSlice = createSlice({
         setLoading: (state, action) => {
             state.loading = action.payload;
         },
-        setUser: (state, action) => {
+            setUser: (state, action) => {
             const payload = action.payload;
 
             if (payload?.success) {
@@ -53,6 +53,7 @@ export const userSlice = createSlice({
             state.user = null;
             state.isAuthenticated = false;
             state.error = null;
+            localStorage.removeItem("token");
         },
     },
 });
@@ -66,10 +67,12 @@ export const registerUser = (userData, navigate) => async (dispatch) => {
     try {
         const { data } = await axiosInstance.post("/user/register", userData);
         if (data?.success) {
-            dispatch(setUser(data.user));
+            const userData = data.profile || data.user;
+            dispatch(setUser(userData));
+            if (data.token) localStorage.setItem("token", data.token);
             toast.success(data.message);
-            navigate("/dashboard");
-            // setTimeout(() => navigate("/dashboard"), 1200);
+            const redirectPath = userData?.role === "admin" ? "/dashboard/admin" : "/dashboard";
+            navigate(redirectPath);
         }
     } catch (err) {
         dispatch(setError(err.response?.data?.message || "Registration failed"));
@@ -85,11 +88,12 @@ export const loginUser = (userData, navigate) => async (dispatch) => {
     try {
         const { data } = await axiosInstance.post("/user/login", userData);
         if (data?.success) {
-            dispatch(setUser(data.user));
+            const userData = data.profile || data.user;
+            dispatch(setUser(userData));
+            if (data.token) localStorage.setItem("token", data.token);
             toast.success(data.message);
-            // navigate("/")
-            navigate("/dashboard"); 
-            // setTimeout(() => navigate("/"), 1200);
+            const redirectPath = userData?.role === "admin" ? "/dashboard/admin" : "/dashboard";
+            navigate(redirectPath);
         }
 
     } catch (err) {
@@ -105,6 +109,7 @@ export const logoutUser = () => async (dispatch) => {
     dispatch(setLoading(true));
     try {
         const { data } = await axiosInstance.get("/user/logout");
+        localStorage.removeItem("token");
         if (data?.success) {
             dispatch(setLogout());
             toast.success(data.message);
