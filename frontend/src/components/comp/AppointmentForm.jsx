@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createAppointmentUser } from "@/redux/slices/appoinmentSlice";
 import { CheckCircle } from "lucide-react";
 import { getAllDoctors } from "@/redux/slices/doctorsSlice";
+import { allDoctors as fallbackDoctors } from "@/services/Doctor";
 
 // const departments = [
 //     { value: "cardiology", label: "Cardiology" },
@@ -47,28 +48,28 @@ const AppointmentForm = ({ doctor, setSelectedModal, header = false }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
-    const getDepartments = [...new Set(doctors?.map(d => d.department))]
+    const availableDoctors = doctors?.length > 0 ? doctors : fallbackDoctors;
+
+    const getDepartments = [...new Set(availableDoctors.map((d) => d.department).filter(Boolean))];
 
     const departments = [
         ...getDepartments.map((dept) => ({ value: dept, label: dept })),
     ];
 
-
-
     const handleChange = (field, value) => {
         setFormData((prev) => ({
             ...prev,
             [field]: value,
-            // ...(field === "department" ? { doctorId: "", doctorName: "" } : {}),
+            ...(field === "department" ? { doctorId: "", doctorName: "" } : {}),
         }));
     };
 
 
     const getDoctorsSelectedDepartment = useMemo(() => {
         return formData.department
-            ? doctors.filter((d) => d.department === formData.department)
+            ? availableDoctors.filter((d) => d.department === formData.department)
             : [];
-    }, [formData.department, doctors]);
+    }, [formData.department, availableDoctors]);
     // console.log("getDoctorsSelectedDepartment :", getDoctorsSelectedDepartment);
 
 
@@ -230,49 +231,54 @@ const AppointmentForm = ({ doctor, setSelectedModal, header = false }) => {
                                                 {formData.department || "Select department"}
                                             </SelectValue>
                                         </SelectTrigger>
-                                        {!doctor && <SelectContent>
-                                            {departments.map((d) => (
-                                                <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>
-                                            ))}
-                                        </SelectContent>}
+                                        <SelectContent>
+                                            {departments.length > 0 ? (
+                                                departments.map((d) => (
+                                                    <SelectItem key={d.value} value={d.value}>
+                                                        {d.label}
+                                                    </SelectItem>
+                                                ))
+                                            ) : (
+                                                <SelectItem value="no-departments" disabled>
+                                                    No departments available
+                                                </SelectItem>
+                                            )}
+                                        </SelectContent>
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Doctor (Optional)</Label>
-                                    {doctor ? <Input
-                                        id="doctorName"
-                                        value={formData.doctorName}
-                                        onChange={(e) => handleChange("doctorName", e.target.value)}
-                                    />
-                                        :
-                                        <Select
-                                            value={formData.doctorId}
-                                            onValueChange={(val) => {
-                                                const selectedDoctor = getDoctorsSelectedDepartment.find(
-                                                    (d) => d._id === val
-                                                );
-                                                handleChange("doctorId", val);
-                                                handleChange("doctorName", selectedDoctor?.user?.fullName || "");
-                                            }}
-                                            disabled={!formData.department}
-                                        >
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select doctor">
-                                                    {formData.doctorName || "Select doctor"}
-                                                </SelectValue>
-                                            </SelectTrigger>
+                                    <Select
+                                        value={formData.doctorId}
+                                        onValueChange={(val) => {
+                                            const selectedDoctor = getDoctorsSelectedDepartment.find(
+                                                (d) => d._id === val
+                                            );
+                                            handleChange("doctorId", val);
+                                            handleChange("doctorName", selectedDoctor?.user?.fullName || "");
+                                        }}
+                                        disabled={!formData.department}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select doctor">
+                                                {formData.doctorName || "Select doctor"}
+                                            </SelectValue>
+                                        </SelectTrigger>
 
-                                            <SelectContent>
-                                                {getDoctorsSelectedDepartment.length > 0 && (
-                                                    getDoctorsSelectedDepartment.map((d) => (
-                                                        <SelectItem key={d._id} value={d._id}>
-                                                            {d.user?.fullName}
-                                                        </SelectItem>
-                                                    ))
-                                                )}
-                                            </SelectContent>
-                                        </Select>
-                                    }
+                                        <SelectContent>
+                                            {getDoctorsSelectedDepartment.length > 0 ? (
+                                                getDoctorsSelectedDepartment.map((d) => (
+                                                    <SelectItem key={d._id} value={d._id}>
+                                                        {d.user?.fullName || d.fullName || "Unknown Doctor"}
+                                                    </SelectItem>
+                                                ))
+                                            ) : (
+                                                <SelectItem value="no-doctors" disabled>
+                                                    No doctors available for this department
+                                                </SelectItem>
+                                            )}
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
 
