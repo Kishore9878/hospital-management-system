@@ -58,6 +58,8 @@ export const DoctorService = {
   },
 };
 
+const generateObjectId = () => Array.from({ length: 24 }, () => '0123456789abcdef'[Math.floor(Math.random() * 16)]).join('');
+
 // export const allDoctors = [
 //   {
 //     _id: "6715c8a10f1d9c0012a1b00156",
@@ -436,7 +438,7 @@ export const DoctorService = {
 export function generateDoctors() {
   return [
     {
-      _id: "6715c8a10f1d9c0012a1b00156",
+      _id: generateObjectId(),
       fullName: "John Smith",
       department: "Dermatology",
       qualifications: "MBBS, MD",
@@ -452,7 +454,7 @@ export function generateDoctors() {
         "Dr. John Smith specializes in child healthcare and preventive Neurology.",
     },
     {
-      _id: "6715c8a10f1d9c0012a1b002279",
+      _id: generateObjectId(),
       fullName: "Emily Johnson",
       department: "Cardiology",
       qualifications: "MBBS, DM",
@@ -468,7 +470,7 @@ export function generateDoctors() {
         "Expert in cardiovascular diseases and non-invasive cardiac procedures.",
     },
     {
-      _id: "6715c8a10f1d9c0012a1b003094",
+      _id: generateObjectId(),
       fullName: "Michael Brown",
       department: "Orthopedics",
       qualifications: "MBBS, MS (Ortho)",
@@ -484,7 +486,7 @@ export function generateDoctors() {
         "Specializes in joint replacement and sports injury rehabilitation.",
     },
     {
-      _id: "6715c8a10f1d9c0012a1b004274",
+      _id: generateObjectId(),
       fullName: "Sarah Davis",
       department: "Neurology",
       qualifications: "MBBS, MD (Neuro)",
@@ -500,7 +502,7 @@ export function generateDoctors() {
         "Focuses on neurological disorders and neuro-rehabilitation.",
     },
     {
-      _id: "6715c8a10f1d9c0012a1b892398005",
+      _id: generateObjectId(),
       fullName: "Daniel Wilson",
       department: "Pediatrics",
       qualifications: "MBBS, DCH",
@@ -515,7 +517,7 @@ export function generateDoctors() {
       description: "Dedicated to child wellness and pediatric nutrition.",
     },
     {
-      _id: "6715c8a10f1d9c0012a1b00620937",
+      _id: generateObjectId(),
       fullName: "Olivia Martinez",
       department: "Gynecology",
       qualifications: "MBBS, MS (OBG)",
@@ -530,7 +532,7 @@ export function generateDoctors() {
       description: "Specialist in women’s health, prenatal and postnatal care.",
     },
     {
-      _id: "6715c8a10f1d9c00132932a1b007",
+      _id: generateObjectId(),
       fullName: "William Anderson",
       department: "ENT",
       qualifications: "MBBS, DLO",
@@ -546,7 +548,7 @@ export function generateDoctors() {
         "Expert in ear, nose, and throat disorders and endoscopic surgeries.",
     },
     {
-      _id: "6715c8a10f1d9c0019832a1b008",
+      _id: generateObjectId(),
       fullName: "Ava Thomas",
       department: "Dermatology",
       qualifications: "MBBS, DDVL",
@@ -562,7 +564,7 @@ export function generateDoctors() {
         "Experienced in skincare treatments and cosmetic Dermatology.",
     },
     {
-      _id: "6715c8a10f1d9c00120282a1b009",
+      _id: generateObjectId(),
       fullName: "James Taylor",
       department: "Urology",
       qualifications: "MBBS, MCh (Urology)",
@@ -578,7 +580,7 @@ export function generateDoctors() {
         "Specializes in urinary tract disorders and prostate treatments.",
     },
     {
-      _id: "6715c8a102345f1d9c0012a1b00a",
+      _id: generateObjectId(),
       fullName: "Mia Moore",
       department: "Psychiatry",
       qualifications: "MBBS, MD (Psych)",
@@ -594,7 +596,7 @@ export function generateDoctors() {
         "Focuses on mental health, anxiety, and mood disorder management.",
     },
     {
-      _id: "6715c8a10f1d9c0012982a1b00b",
+      _id: generateObjectId(),
       fullName: "Ethan Lee",
       department: "Oncology",
       qualifications: "MBBS, DM (Oncology)",
@@ -610,7 +612,7 @@ export function generateDoctors() {
         "Experienced in cancer diagnosis, chemotherapy, and patient counseling.",
     },
     {
-      _id: "6715c8a10f1d9c0012512a1b00c",
+      _id: generateObjectId(),
       fullName: "Isabella Harris",
       department: "Ophthalmology",
       qualifications: "MBBS, MS (Ophth)",
@@ -626,7 +628,7 @@ export function generateDoctors() {
         "Specialist in cataract surgery and vision correction treatments.",
     },
     {
-      _id: "6715c8a10f1d9c09830012a1b00d",
+      _id: generateObjectId(),
       fullName: "Benjamin Clark",
       department: "Dentistry",
       qualifications: "BDS, MDS",
@@ -641,7 +643,7 @@ export function generateDoctors() {
       description: "Expert in restorative dentistry and oral surgery.",
     },
     {
-      _id: "6715c8a10f1d9c10290012a1b00e",
+      _id: generateObjectId(),
       fullName: "Charlotte Lewis",
       department: "Radiology",
       qualifications: "MBBS, MD (Radiology)",
@@ -656,7 +658,7 @@ export function generateDoctors() {
       description: "Experienced in MRI, CT scans, and diagnostic imaging.",
     },
     {
-      _id: "6715c8a10f13972d9c0012a1b00f",
+      _id: generateObjectId(),
       fullName: "Alexander Walker",
       department: "General_Medicine",
       qualifications: "MBBS",
@@ -671,7 +673,7 @@ export function generateDoctors() {
       description: "Provides primary care and preventive health services.",
     },
     {
-      _id: "6715c8a10f1d29839c0012a1b010",
+      _id: generateObjectId(),
       fullName: "Grace Hall",
       department: "Endocrinology",
       qualifications: "MBBS, DM (Endocrinology)",
@@ -686,7 +688,7 @@ export function generateDoctors() {
       description: "Specializes in diabetes and hormonal imbalance management.",
     },
     {
-      _id: "6715c8a10f1d93928c0012a1b011",
+      _id: generateObjectId(),
       fullName: "Lucas Allen",
       department: "Nephrology",
       qualifications: "MBBS, DM (Nephrology)",
@@ -701,7 +703,7 @@ export function generateDoctors() {
       description: "Focuses on kidney care and dialysis treatment management.",
     },
     {
-      _id: "6715c8a10f1d9c0012a1w938b012",
+      _id: generateObjectId(),
       fullName: "Harper Young",
       department: "Gastroenterology",
       qualifications: "MBBS, DM (Gastro)",
@@ -717,7 +719,7 @@ export function generateDoctors() {
         "Expert in digestive system disorders and endoscopy procedures.",
     },
     {
-      _id: "6715c8a10f1d9c0039212a1b013",
+      _id: generateObjectId(),
       fullName: "Henry King",
       department: "Pulmonology",
       qualifications: "MBBS, MD (Pulmo)",
@@ -732,7 +734,7 @@ export function generateDoctors() {
       description: "Specialist in respiratory diseases and allergy treatment.",
     },
     {
-      _id: "6715c8a10f1d9c20920012a1b014",
+      _id: generateObjectId(),
       fullName: "Sofia Wright",
       department: "Rheumatology",
       qualifications: "MBBS, MD (Rheumatology)",
@@ -747,7 +749,7 @@ export function generateDoctors() {
       description: "Expert in autoimmune and musculoskeletal disorders.",
     },
     {
-      _id: "11038",
+      _id: generateObjectId(),
       fullName: "Dr. John Smith",
       department: "Cardiology",
       qualifications: "MBBS, MD",
@@ -762,7 +764,7 @@ export function generateDoctors() {
       description: "Specializes in heart and vascular conditions.",
     },
     {
-      _id: "2129373",
+      _id: generateObjectId(),
       fullName: "Dr. Emily Brown",
       department: "Neurology",
       qualifications: "MBBS, DM",
@@ -777,7 +779,7 @@ export function generateDoctors() {
       description: "Expert in brain and nerve disorders.",
     },
     {
-      _id: "3129384",
+      _id: generateObjectId(),
       fullName: "Dr. David Lee",
       department: "Orthopedics",
       qualifications: "MBBS, MS",
@@ -792,7 +794,7 @@ export function generateDoctors() {
       description: "Specialist in bone and joint care.",
     },
     {
-      _id: "4129234",
+      _id: generateObjectId(),
       fullName: "Dr. Sarah Kim",
       department: "Pediatrics",
       qualifications: "MBBS, DCH",
@@ -807,7 +809,7 @@ export function generateDoctors() {
       description: "Dedicated to children’s health and development.",
     },
     {
-      _id: "520283",
+      _id: generateObjectId(),
       fullName: "Dr. Laura Tanaka",
       department: "Dermatology",
       qualifications: "MBBS, MD",
@@ -822,7 +824,7 @@ export function generateDoctors() {
       description: "Skin and cosmetic care expert.",
     },
     {
-      _id: "629384",
+      _id: generateObjectId(),
       fullName: "Dr. Hiroshi Sato",
       department: "General_Medicine",
       qualifications: "MBBS",

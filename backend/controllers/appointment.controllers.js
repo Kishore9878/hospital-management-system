@@ -20,10 +20,17 @@ export const createAppointment = async (req, res) => {
       reason,
     } = req.body;
 
-    if (!doctorId || !date || !time) {
+    if (!date || !time) {
       return res.status(400).json({
         success: false,
-        message: "Doctor, date, and time are required",
+        message: "Date and time are required",
+      });
+    }
+
+    if (doctorId && !mongoose.isValidObjectId(doctorId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid doctor ID format",
       });
     }
 

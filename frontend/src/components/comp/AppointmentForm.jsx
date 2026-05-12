@@ -103,8 +103,11 @@ const AppointmentForm = ({ doctor, setSelectedModal, header = false }) => {
                 fullName: "",
                 email: "",
                 phone: "",
+                age: "",
+                gender: "",
                 department: "",
-                doctor: "",
+                doctorId: "",
+                doctorName: "",
                 selectedDate: "",
                 selectedTime: "",
                 reason: "",
@@ -238,8 +241,8 @@ const AppointmentForm = ({ doctor, setSelectedModal, header = false }) => {
                                     <Label>Doctor (Optional)</Label>
                                     {doctor ? <Input
                                         id="doctorName"
-                                        value={doctor ? formData?.doctorName : formData?.doctorName}
-                                        onChange={(e) => handleChange("doctor", e.target.value)}
+                                        value={formData.doctorName}
+                                        onChange={(e) => handleChange("doctorName", e.target.value)}
                                     />
                                         :
                                         <Select
