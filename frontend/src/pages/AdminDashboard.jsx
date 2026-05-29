@@ -19,6 +19,7 @@ import { Calendar, Clock, LogOut, Menu, Users, Users2 } from 'lucide-react';
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { allDoctors as dummyDoctors } from '@/services/Doctor';
 
 const AdminDashboard = () => {
     const { user: currentUserAdmin, isAuthenticated } = useSelector(
@@ -67,7 +68,7 @@ const AdminDashboard = () => {
     const openDetailModal = (id) => {
         const allUsers = [
             ...(allData?.patients || []),
-            ...(allData?.doctors || [])
+            ...combinedDoctors
         ];
 
         const selected = allUsers.find((u) => u._id === id);
@@ -83,7 +84,7 @@ const AdminDashboard = () => {
     const openEditModal = (id) => {
         const allUsers = [
             ...(allData?.patients || []),
-            ...(allData?.doctors || []),
+            ...combinedDoctors,
         ];
 
         const selected = allUsers.find((u) => u._id === id);
@@ -121,6 +122,22 @@ const AdminDashboard = () => {
         setUserDetail(null);
         setIsEditing(false);
         setEditFields(null);
+    };
+
+    // Combine dummy doctors with API doctors
+    const combinedDoctors = [
+        ...dummyDoctors,
+        ...(allData?.doctors || []),
+    ].reduce((unique, doctor) => {
+        const key = doctor._id;
+        if (!unique.some((item) => item._id === key)) {
+            unique.push(doctor);
+        }
+        return unique;
+    }, []);
+
+    const getTotalDoctorsCount = () => {
+        return combinedDoctors.length;
     };
 
     const getAllData = async () => {
@@ -348,7 +365,7 @@ const AdminDashboard = () => {
                             />
                             <StatsCard
                                 title="Total Doctors"
-                                value={allData?.totalDoctors || 0}
+                                value={getTotalDoctorsCount()}
                                 icon={Users2}
                                 color="blue"
                                 trend="+12% this month"
@@ -451,7 +468,7 @@ const AdminDashboard = () => {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                             {
-                                allData?.doctors?.map(doctors =>
+                                combinedDoctors?.map(doctors =>
                                     <UserCard key={doctors?._id} user={doctors} openDetailModal={openDetailModal} onEdit={openEditModal} />
                                 )
 

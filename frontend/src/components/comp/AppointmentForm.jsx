@@ -48,7 +48,19 @@ const AppointmentForm = ({ doctor, setSelectedModal, header = false }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
-    const availableDoctors = doctors?.length > 0 ? doctors : fallbackDoctors;
+    // Combine dummy doctors with API doctors
+    const combinedDoctorsData = [
+        ...fallbackDoctors,
+        ...(doctors || []),
+    ].reduce((unique, doctor) => {
+        const key = doctor._id;
+        if (!unique.some((item) => item._id === key)) {
+            unique.push(doctor);
+        }
+        return unique;
+    }, []);
+
+    const availableDoctors = combinedDoctorsData.length > 0 ? combinedDoctorsData : fallbackDoctors;
 
     const getDepartments = [...new Set(availableDoctors.map((d) => d.department).filter(Boolean))];
 

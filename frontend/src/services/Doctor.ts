@@ -435,7 +435,7 @@ const generateObjectId = () => Array.from({ length: 24 }, () => '0123456789abcde
 //     description: "Provides general diagnosis and treatment.",
 //   },
 // ];
-export function generateDoctors() {
+function generateDoctors() {
   return [
     {
       _id: generateObjectId(),

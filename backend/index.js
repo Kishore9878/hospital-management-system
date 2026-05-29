@@ -52,8 +52,6 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static("public"));
 
-app.use(error);
-
 // just for test
 app.get("/", (req, res) => {
   res.json({ message: "Hello World!" });
@@ -64,12 +62,42 @@ app.use("/api/user", userRouter);
 app.use("/api/doctor", doctorRouter);
 app.use("/api/admin", adminRouter);
 
-connectDb()
-  .then(() => {
-    app.listen(port, () => {
-      console.log("Server connected on port : ", port);
+// Error handler middleware MUST come after all routes
+app.use(error);
+
+let dbConnectionPromise = null;
+
+const ensureDbConnection = async () => {
+  if (dbConnectionPromise) {
+    return dbConnectionPromise;
+  }
+
+  dbConnectionPromise = connectDb();
+  return dbConnectionPromise;
+};
+
+// Start server for local development
+app.listen(port, async () => {
+  try {
+    await ensureDbConnection();
+    console.log(`Server running on port ${port}`);
+  } catch (error) {
+    console.error("Failed to connect to database:", error);
+    process.exit(1);
+  }
+});
+
+// Export for serverless deployment
+export default async function handler(req, res) {
+  try {
+    await ensureDbConnection();
+    app(req, res);
+  } catch (error) {
+    console.error("Serverless function error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
     });
-  })
-  .catch((error) => {
-    console.log("Server Error : ", error);
-  });
+  }
+}
