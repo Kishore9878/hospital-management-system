@@ -1,3 +1,5 @@
-// export const backendApi = "https://hospital-web-backend.vercel.app"; // vercel
-// export const backendApi = "https://hospital-web-backend.onrender.com"; // render
-export const backendApi = "http://localhost:3060"; // local
+// Use production URL or local for development
+const isProduction = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
+export const backendApi = isProduction 
+  ? "https://hospital-management-system-l3d2tdvh6-hospital2.vercel.app" 
+  : "http://localhost:3060";

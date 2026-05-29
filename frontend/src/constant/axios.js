@@ -1,7 +1,13 @@
 import axios from "axios";
 
+// Use production URL or local for development
+const isProduction = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
+const baseURL = isProduction 
+  ? "https://hospital-management-system-l3d2tdvh6-hospital2.vercel.app/api"
+  : "http://localhost:3060/api";
+
 export const axiosInstance = axios.create({
-  baseURL: "http://localhost:3060/api",
+  baseURL: baseURL,
   withCredentials: true,
 });
 
