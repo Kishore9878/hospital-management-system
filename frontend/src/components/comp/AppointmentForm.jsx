@@ -48,7 +48,16 @@ const AppointmentForm = ({ doctor, setSelectedModal, header = false }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
-    const availableDoctors = doctors?.length > 0 ? doctors : fallbackDoctors;
+    const availableDoctors = [
+        ...fallbackDoctors,
+        ...(doctors || []),
+    ].reduce((unique, doctor) => {
+        const key = doctor?._id || doctor?.id || doctor?.email || doctor?.fullName;
+        if (!unique.some((item) => item?._id === key || item?.id === key || item?.email === key || item?.fullName === key)) {
+            unique.push(doctor);
+        }
+        return unique;
+    }, []);
 
     const getDepartments = [...new Set(availableDoctors.map((d) => d.department).filter(Boolean))];
 

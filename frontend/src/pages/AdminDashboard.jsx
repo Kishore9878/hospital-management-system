@@ -16,6 +16,7 @@ import { logoutUser } from '@/redux/slices/userSlice';
 import { createPageUrl } from '@/utils';
 import { toast } from 'react-toastify';
 import { Calendar, Clock, LogOut, Menu, Users, Users2 } from 'lucide-react';
+import { allDoctors as dummyDoctors } from '@/services/Doctor';
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -123,22 +124,32 @@ const AdminDashboard = () => {
         setEditFields(null);
     };
 
+    const mergeDoctors = (apiDoctors = [], fallbackDoctorsList = []) => {
+        const map = new Map();
+        [...fallbackDoctorsList, ...apiDoctors].forEach((doctor) => {
+            const key = doctor?._id || doctor?.id || doctor?.email || doctor?.fullName;
+            if (!map.has(key)) {
+                map.set(key, doctor);
+            }
+        });
+        return Array.from(map.values());
+    };
+
     const getAllData = async () => {
-
-
-        // dispatch(updateUserProfile(profileData))
         setLoading(true)
         try {
             const { data } = await axiosInstance.get('/admin/all')
-
-            setAllData(data)
+            const mergedDoctors = mergeDoctors(data.doctors, dummyDoctors);
+            setAllData({
+                ...data,
+                doctors: mergedDoctors,
+                totalDoctors: mergedDoctors.length,
+            })
         } catch (error) {
             console.log("Error with updating profile", error);
-
         } finally {
             setLoading(false)
         }
-
     }
 
     const handleCreateFormChange = (e) => {

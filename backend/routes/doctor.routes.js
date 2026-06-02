@@ -18,7 +18,7 @@ import {
 } from "../controllers/appointment.controllers.js";
 
 const doctorRouter = Router();
-doctorRouter.get("/all", isAuthenticated, getAllDoctors);
+doctorRouter.get("/all", getAllDoctors);
 doctorRouter.get("/patients", isAuthenticated, isDoctor, getDoctorPatients);
 doctorRouter.get(
   "/patient/:patientId",

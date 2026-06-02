@@ -78,7 +78,7 @@ export default function Doctors() {
     // };
 
     const openDoctorDetail = (id) => {
-        const doctor = doctors?.find((d) => d._id === id);
+        const doctor = allDoctorsData?.find((d) => d._id === id || d.id === id);
         setDoctorDetail(doctor);
         setSelectedModal("detail");
     };
