@@ -28,6 +28,10 @@ const corsOptions = {
       .map((s) => s.trim())
       .filter(Boolean);
 
+      if (allowedOrigins.includes("*")) {
+    return callback(null, true);
+      }
+
     // If the request has no origin (like same-origin or server-to-server), allow it.
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
