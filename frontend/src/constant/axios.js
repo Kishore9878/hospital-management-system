@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: "http://localhost:3060/api",
+  baseURL: "https://hospital-management-system-ebhn.onrender.com/api",
   withCredentials: true,
 });
 
