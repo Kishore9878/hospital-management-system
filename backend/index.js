@@ -20,33 +20,38 @@ process.on("uncaughtException", (err) => {
 });
 
 const corsOptions = {
-  // FRONTENDAPI can be a single origin or a comma-separated list.
-  // Example: http://localhost:5173,http://localhost:5174
   origin: (origin, callback) => {
     const allowedOrigins = (process.env.FRONTENDAPI || "")
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean);
 
-      if (allowedOrigins.includes("*")) {
-    return callback(null, true);
-      }
+    // allow requests with no origin
+    if (!origin) {
+      return callback(null, true);
+    }
 
-    // If the request has no origin (like same-origin or server-to-server), allow it.
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // allow configured frontend domains
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
 
-    // Local dev convenience: allow any localhost/127.0.0.1 port.
-    // This prevents "Access-Control-Allow-Origin missing" when the dev server port changes.
-    if (/^https?:\/\/localhost:\d+$/i.test(origin)) return callback(null, true);
-    if (/^https?:\/\/127\.0\.0\.1:\d+$/i.test(origin)) return callback(null, true);
+    // allow localhost during development
+    if (/^https?:\/\/localhost:\d+$/i.test(origin)) {
+      return callback(null, true);
+    }
 
-    return callback(null, false);
+    if (/^https?:\/\/127\.0\.0\.1:\d+$/i.test(origin)) {
+      return callback(null, true);
+    }
+
+    // reject others
+    return callback(new Error("Not allowed by CORS"));
   },
+
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  optionsSuccessStatus: 200,
 };
 // middleware
 app.use(bodyParser.urlencoded({ extended: false }));
