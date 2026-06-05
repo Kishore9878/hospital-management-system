@@ -19,49 +19,55 @@ process.on("uncaughtException", (err) => {
   console.log("Shut down server due to :", err.message);
 });
 
-const corsOptions = {
-  origin: (origin, callback) => {
-    const allowedOrigins = (process.env.FRONTENDAPI || "")
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
+// const corsOptions = {
+//   origin: (origin, callback) => {
+//     const allowedOrigins = (process.env.FRONTENDAPI || "")
+//       .split(",")
+//       .map((s) => s.trim())
+//       .filter(Boolean);
 
-    // allow requests with no origin
-    if (!origin) {
-      return callback(null, true);
-    }
+//     // allow requests with no origin
+//     if (!origin) {
+//       return callback(null, true);
+//     }
 
-    // allow configured frontend domains
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
+//     // allow configured frontend domains
+//     if (allowedOrigins.includes(origin)) {
+//       return callback(null, true);
+//     }
 
-    // allow localhost during development
-    if (/^https?:\/\/localhost:\d+$/i.test(origin)) {
-      return callback(null, true);
-    }
+//     // allow localhost during development
+//     if (/^https?:\/\/localhost:\d+$/i.test(origin)) {
+//       return callback(null, true);
+//     }
 
-    if (/^https?:\/\/127\.0\.0\.1:\d+$/i.test(origin)) {
-      return callback(null, true);
-    }
+//     if (/^https?:\/\/127\.0\.0\.1:\d+$/i.test(origin)) {
+//       return callback(null, true);
+//     }
 
-    // reject others
-    return callback(new Error("Not allowed by CORS"));
-  },
+//     // reject others
+//     return callback(new Error("Not allowed by CORS"));
+//   },
 
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
+//   credentials: true,
+//   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+// };
+
+
 // middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors({
+  origin: "https://hospital-management-system-eight-beige.vercel.app",
+  credentials: true,
+}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static("public"));
 
-app.use(error);
+
 
 // just for test
 app.get("/", (req, res) => {
@@ -72,6 +78,8 @@ app.get("/", (req, res) => {
 app.use("/api/user", userRouter);
 app.use("/api/doctor", doctorRouter);
 app.use("/api/admin", adminRouter);
+
+app.use(error);
 
 connectDb()
   .then(() => {
