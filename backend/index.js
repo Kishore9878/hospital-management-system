@@ -60,7 +60,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 // app.use(cors(corsOptions));
 app.use(cors({
-  origin: "https://hospital-management-system-eight-beige.vercel.app",
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://hospital-management-system-eight-beige.vercel.app"
+  ],
   credentials: true,
 }));
 app.use(bodyParser.json());
