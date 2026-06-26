@@ -1,4 +1,4 @@
-import { learncode } from "@/constant/learncode";
+import { healthOS } from "@/constant/healthOS";
 import { createPageUrl } from "@/utils";
 import { Heart, Mail, MapPin, Phone } from "lucide-react"
 import { Link } from "react-router-dom";
@@ -18,7 +18,7 @@ const Footer = () => {
                     <div>
                         <div className="flex items-center gap-2 mb-4">
                             <Heart className="w-6 h-6 text-blue-400" fill="currentColor" />
-                            <h3 className="text-xl font-bold">{learncode}</h3>
+                            <h3 className="text-xl font-bold">{healthOS}</h3>
                         </div>
                         <p className="text-gray-400 text-sm leading-relaxed">
                             Providing exceptional healthcare services with compassion and expertise since 1995.
@@ -84,7 +84,7 @@ const Footer = () => {
                 </div>
 
                 <div className="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
-                    <p>&copy; {new Date().getFullYear()} LearCode Medical Center. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} HealthOS Medical Center. All rights reserved.</p>
                 </div>
             </div>
         </footer>

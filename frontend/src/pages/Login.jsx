@@ -116,10 +116,11 @@ export default function AuthForm() {
                 <motion.img
                     src={logo || ""}
                     alt="Hospital illustration"
-                    className="rounded-3xl shadow-2xl max-w-[300px] w-full object-cover"
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.8 }}
+                    className="rounded-3xl shadow-2xl max-w-[300px] w-full object-cover cursor-pointer"
+                    initial={{ scale: 0.9, y: 0, opacity: 0 }}
+                    animate={{ scale: 1, y: 0, opacity: 1 }}
+                    whileHover={{ y: -15, scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 />
 
                 {/* Right side - Text */}

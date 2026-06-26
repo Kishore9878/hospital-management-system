@@ -13,7 +13,7 @@ const contactInfo = [
     {
         icon: Mail,
         title: "Email",
-        details: ["info@learncode.com", "appointments@learncode.com", "emergency@learncode.com"],
+        details: ["info@healthos.com", "appointments@healthos.com", "emergency@healthos.com"],
         color: "from-purple-500 to-indigo-500"
     },
     {

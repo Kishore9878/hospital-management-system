@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { createPageUrl } from '@/utils'
 import { axiosInstance } from '@/constant/axios'
+import { healthOS } from '@/constant/healthOS'
 import { useEffect, useState } from 'react'
 
 const Sidebar = ({ currentUser, sidebarOpen, setSidebarOpen, selectedLink, setSelectedLink }) => {
@@ -69,9 +70,9 @@ const Sidebar = ({ currentUser, sidebarOpen, setSidebarOpen, selectedLink, setSe
             >
                 {/* Sidebar Header */}
                 <div className="flex items-center justify-between p-3 border-b">
-                    <Link to={createPageUrl("Home")} className="flex gap-2 items-center" >
-                        <img className="w-12" src={logo} />
-                        <h2 className="text-2xl font-bold text-indigo-400">LearnCode</h2>
+                    <Link to={createPageUrl("Home")} className="flex gap-2 items-center group" >
+                        <img className="w-12 transition-transform duration-300 group-hover:-translate-y-1" src={logo} />
+                        <h2 className="text-2xl font-bold text-indigo-400">{healthOS}</h2>
                     </Link>
                     <Button
                         variant="ghost"

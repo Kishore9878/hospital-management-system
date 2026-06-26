@@ -17,7 +17,7 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 import { useDispatch, useSelector } from "react-redux";
-import { learncode } from "@/constant/learncode";
+import { healthOS } from "@/constant/healthOS";
 import ProfileImage from "./ProfileImage";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { logoutUser } from "@/redux/slices/userSlice";
@@ -62,7 +62,7 @@ const Navbar = () => {
                             </div>
                             <div>
                                 <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
-                                    {learncode}
+                                    {healthOS}
                                 </h1>
                                 <p className="text-xs text-gray-500">Medical Center</p>
                             </div>
