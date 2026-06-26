@@ -25,9 +25,19 @@ export default function AppointmentCard({ appointment, handleStatusUpdate, showP
                         <Clock className="w-4 h-4" />
                         {(() => {
                             if (!appointment?.time) return "N/A";
-                            const [hour, minute] = appointment.time.split(":").map(Number);
+                            if (appointment.time.toLowerCase().includes("am") || appointment.time.toLowerCase().includes("pm")) {
+                                return appointment.time;
+                            }
+                            if (appointment.time.includes("-")) {
+                                return appointment.time;
+                            }
+                            const parts = appointment.time.split(":");
+                            if (parts.length < 2) return appointment.time;
+                            const hour = Number(parts[0]);
+                            const minute = Number(parts[1]);
+                            if (isNaN(hour) || isNaN(minute)) return appointment.time;
                             const ampm = hour >= 12 ? "PM" : "AM";
-                            const formattedHour = hour % 12 || 12; // convert 0 -> 12, 13 -> 1
+                            const formattedHour = hour % 12 || 12;
                             return `${formattedHour}:${minute.toString().padStart(2, "0")} ${ampm}`;
                         })()}
                     </div>

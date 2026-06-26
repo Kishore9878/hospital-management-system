@@ -126,7 +126,7 @@ const AdminDashboard = () => {
 
     const mergeDoctors = (apiDoctors = [], fallbackDoctorsList = []) => {
         const map = new Map();
-        [...fallbackDoctorsList, ...apiDoctors].forEach((doctor) => {
+        [...apiDoctors, ...fallbackDoctorsList].forEach((doctor) => {
             const key = doctor?._id || doctor?.id || doctor?.email || doctor?.fullName;
             if (!map.has(key)) {
                 map.set(key, doctor);
@@ -651,7 +651,7 @@ const AdminDashboard = () => {
                                         <div className="md:col-span-1 md:sticky md:top-0 h-full flex flex-col items-center p-4 bg-gray-50 rounded-xl">
 
                                             <ProfileImage
-                                                user={userDetail?.user}
+                                                user={userDetail?.user || userDetail}
                                                 className="w-full h-full"
                                                 letter={2}
                                                 imageBg="black"

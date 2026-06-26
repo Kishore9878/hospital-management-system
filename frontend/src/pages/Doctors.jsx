@@ -42,8 +42,8 @@ export default function Doctors() {
 
     // Combine dummy data with API-fetched doctors and dedupe by email (or ID if available)
     const allDoctorsData = [
-        ...dummyDoctors,
         ...(apiDoctors || []),
+        ...dummyDoctors,
     ].reduce((unique, doctor) => {
         const key = doctor.email || doctor?._id || doctor.fullName;
         if (!unique.some((item) => item.email === key || item._id === key || item.fullName === key)) {
@@ -207,7 +207,7 @@ export default function Doctors() {
                                                             alt="Profile"
                                                             className="w-full h-full object-cover"
                                                         /> */}
-                                                        <ProfileImage user={doctor?.user} className="w-full h-full" imageBg="blue" letter={2} />
+                                                        <ProfileImage user={doctor?.user || doctor} className="w-full h-full" imageBg="blue" letter={2} />
                                                     </div>
                                                 )}
                                             </div>
@@ -314,7 +314,7 @@ export default function Doctors() {
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                         <div className="md:col-span-1 flex flex-col items-center p-4 bg-gray-50 rounded-xl">
                                             <div className="w-32 h-32 rounded-full bg-gradient-to-r from-blue-600 to-blue-500 flex items-center justify-center text-primary-blue text-3xl font-bold mb-4 border-4 border-primary-blue/50">
-                                                <ProfileImage user={doctorDetail?.user} className="w-full h-full" letter={2} imageBg="blue" />
+                                                <ProfileImage user={doctorDetail?.user || doctorDetail} className="w-full h-full" letter={2} imageBg="blue" />
                                             </div>
                                             <p className="text-xl text-secondary-green font-semibold mt-1 text-center">
                                                 {doctorDetail.specialty}

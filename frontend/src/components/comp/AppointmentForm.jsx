@@ -49,8 +49,8 @@ const AppointmentForm = ({ doctor, setSelectedModal, header = false }) => {
     const [submitted, setSubmitted] = useState(false);
 
     const availableDoctors = [
-        ...fallbackDoctors,
         ...(doctors || []),
+        ...fallbackDoctors,
     ].reduce((unique, doctor) => {
         const key = doctor?._id || doctor?.id || doctor?.email || doctor?.fullName;
         if (!unique.some((item) => item?._id === key || item?.id === key || item?.email === key || item?.fullName === key)) {
@@ -79,6 +79,72 @@ const AppointmentForm = ({ doctor, setSelectedModal, header = false }) => {
             ? availableDoctors.filter((d) => d.department === formData.department)
             : [];
     }, [formData.department, availableDoctors]);
+
+    const selectedDoctorObj = useMemo(() => {
+        return getDoctorsSelectedDepartment.find(
+            (d) => d._id === formData.doctorId || d.id === formData.doctorId
+        );
+    }, [formData.doctorId, getDoctorsSelectedDepartment]);
+
+    const dynamicTimeSlots = useMemo(() => {
+        const defaultSlots = [
+            "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+            "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00"
+        ];
+        
+        const availableTimes = selectedDoctorObj?.availableTimes || selectedDoctorObj?.available_times;
+        if (!availableTimes) return defaultSlots;
+
+        let parts = [];
+        if (availableTimes.toLowerCase().includes("to")) {
+            parts = availableTimes.toLowerCase().split("to").map(p => p.trim());
+        } else if (availableTimes.includes("-")) {
+            parts = availableTimes.split("-").map(p => p.trim());
+        } else {
+            return defaultSlots;
+        }
+
+        if (parts.length !== 2) return defaultSlots;
+
+        const parseTimeStr = (str) => {
+            const cleanStr = str.toLowerCase().replace(/\s/g, "");
+            const isPm = cleanStr.includes("pm");
+            const isAm = cleanStr.includes("am");
+            
+            const numPart = cleanStr.replace("am", "").replace("pm", "");
+            const timeParts = numPart.split(":");
+            let hour = Number(timeParts[0]);
+            let min = Number(timeParts[1] || 0);
+
+            if (isNaN(hour) || isNaN(min)) return null;
+
+            if (isPm && hour < 12) {
+                hour += 12;
+            } else if (isAm && hour === 12) {
+                hour = 0;
+            }
+
+            return hour * 60 + min;
+        };
+
+        const startMinutes = parseTimeStr(parts[0]);
+        const endMinutes = parseTimeStr(parts[1]);
+
+        if (startMinutes === null || endMinutes === null) return defaultSlots;
+
+        const slots = [];
+        let current = startMinutes;
+        
+        while (current <= endMinutes) {
+            const h = Math.floor(current / 60);
+            const m = current % 60;
+            const timeStr = `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
+            slots.push(timeStr);
+            current += 30;
+        }
+
+        return slots.length > 0 ? slots : defaultSlots;
+    }, [selectedDoctorObj]);
     // console.log("getDoctorsSelectedDepartment :", getDoctorsSelectedDepartment);
 
 
@@ -288,6 +354,21 @@ const AppointmentForm = ({ doctor, setSelectedModal, header = false }) => {
                                             )}
                                         </SelectContent>
                                     </Select>
+                                    {formData.doctorId && (
+                                        (() => {
+                                            const selectedDoctor = getDoctorsSelectedDepartment.find(
+                                                (d) => d._id === formData.doctorId || d.id === formData.doctorId
+                                            );
+                                            return selectedDoctor ? (
+                                                <p className="text-xs text-blue-600 font-medium mt-1">
+                                                    Availability: {selectedDoctor.availableTimes || selectedDoctor.available_times || "N/A"} 
+                                                    {Array.isArray(selectedDoctor.availableDays) && selectedDoctor.availableDays.length > 0
+                                                        ? ` (${selectedDoctor.availableDays.join(", ")})`
+                                                        : ""}
+                                                </p>
+                                            ) : null;
+                                        })()
+                                    )}
                                 </div>
                             </div>
 
@@ -313,7 +394,7 @@ const AppointmentForm = ({ doctor, setSelectedModal, header = false }) => {
                                             <SelectValue placeholder="Select time" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {timeSlots.map((t) => (
+                                            {dynamicTimeSlots.map((t) => (
                                                 <SelectItem key={t} value={t}>{t}</SelectItem>
                                             ))}
                                         </SelectContent>
