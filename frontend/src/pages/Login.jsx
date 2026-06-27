@@ -67,11 +67,22 @@ export default function AuthForm() {
                 }
                 setLoading(false);
             } else if (mode === "reset") {
-                const { data } = await axiosInstance.post(`user/reset/token=${token}`, form);
+                const { data } = await axiosInstance.post(`/user/reset-password/${token}`, {
+                    password: form.password,
+                    confirmPassword: form.cpassword
+                });
                 if (data.success) {
-                    toast.success(data.message || 'Passwrod reset successfully')
-                        ;
-                    setTimeout(() => setMode("reset"), 1200);
+                    toast.success(data.message || 'Password reset successfully');
+                    setTimeout(() => {
+                        setMode("login");
+                        setForm({
+                            fullName: "",
+                            email: "",
+                            password: "",
+                            cpassword: "",
+                            role: "",
+                        });
+                    }, 1200);
                 }
                 setLoading(false);
             }
@@ -341,12 +352,13 @@ export default function AuthForm() {
                                     <input
                                         type="password"
                                         value={form.password}
+                                        name="password"
                                         onChange={handleChange}
                                         placeholder="New Password"
                                         className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
                                     />
                                     <input
-                                        type="cpassword"
+                                        type="password"
                                         value={form.cpassword}
                                         name="cpassword"
                                         onChange={handleChange}

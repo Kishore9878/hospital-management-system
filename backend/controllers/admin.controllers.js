@@ -513,7 +513,21 @@ export const getAllParientAndDoctors = async (req, res) => {
     // Get all patients and doctors
     const patients = await Patient.find({}).populate("user");
     const doctors = await Doctor.find({}).populate("user");
-    const appointments = await Appointment.find({});
+    const appointments = await Appointment.find({})
+      .populate({
+        path: "patient",
+        populate: {
+          path: "user",
+          select: "fullName email profileImage role createdAt",
+        },
+      })
+      .populate({
+        path: "doctor",
+        populate: {
+          path: "user",
+          select: "fullName email profileImage department",
+        },
+      });
 
     // Get today's date range
     const startOfDay = new Date();
@@ -524,11 +538,22 @@ export const getAllParientAndDoctors = async (req, res) => {
 
     // Find today's appointments
     const todaysAppointments = await Appointment.find({
-      appointmentDate: { $gte: startOfDay, $lte: endOfDay },
+      date: { $gte: startOfDay, $lte: endOfDay },
     })
-      .populate("patient")
-      .populate("doctor")
-      .populate("user");
+      .populate({
+        path: "patient",
+        populate: {
+          path: "user",
+          select: "fullName email profileImage role createdAt",
+        },
+      })
+      .populate({
+        path: "doctor",
+        populate: {
+          path: "user",
+          select: "fullName email profileImage department",
+        },
+      });
 
     // Counts
     const totalPatients = await Patient.countDocuments();
