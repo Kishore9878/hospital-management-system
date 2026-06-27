@@ -100,7 +100,11 @@ function App() {
   const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
-    dispatch(getUserProfile());
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      dispatch(getUserProfile());
+    }
   }, [dispatch]);
 
   return <RouterProvider router={router} />;
