@@ -50,8 +50,10 @@ const Sidebar = ({ currentUser, sidebarOpen, setSidebarOpen, selectedLink, setSe
 
 
     useEffect(() => {
-        getAllUsers()
-    }, [])
+        if (currentUser?.role === "admin") {
+            getAllUsers();
+        }
+    }, [currentUser]);
     return (
         <div>
             {/* Mobile Overlay */}
