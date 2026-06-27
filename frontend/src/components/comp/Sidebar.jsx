@@ -48,11 +48,20 @@ const Sidebar = ({ currentUser, sidebarOpen, setSidebarOpen, selectedLink, setSe
 
     console.log("allUsers :", allUsers);
 
+    console.log("Current User:", currentUser);
+    console.log("Current Role:", currentUser?.role);
+
 
     useEffect(() => {
-        if (currentUser?.role === "admin") {
-            getAllUsers();
+        console.log("NEW SIDEBAR CODE");
+
+        if (currentUser?.role !== "admin") {
+            console.log("Skipping getAllUsers");
+            return;
         }
+
+        console.log("Fetching all users");
+        getAllUsers();
     }, [currentUser]);
     return (
         <div>
