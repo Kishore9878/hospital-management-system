@@ -56,7 +56,7 @@ const Login = () => {
         try {
             dispatch(setLoading(true))
             const { data } = await axios.post(
-                `${backendApi}/api/v1/user/login`,
+                `${backendApi}/api/user/login`,
                 userData,
                 axiosConfig,
             )

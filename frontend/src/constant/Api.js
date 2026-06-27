@@ -3,5 +3,5 @@
 // export const backendApi = "http://localhost:3060"; // local
 
 export const backendApi =
-  import.meta.env.VITE_BACKEND_URL?.replace(/\/api\/v1$/, "") ||
+  import.meta.env.VITE_BACKEND_URL?.replace(/\/api$/, "") ||
   "https://hospital-management-system-8oc0.onrender.com";
